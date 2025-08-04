@@ -9,6 +9,8 @@ import SwiftUI
 
 struct HomeView: View {
     
+    @Environment(HomeViewModel.self) var vm
+    
     @State private var showPortfolio: Bool = false
     
     var body: some View {
@@ -20,6 +22,15 @@ struct HomeView: View {
             // content layer
             VStack {
                 homeHeader
+                columnText
+                if !showPortfolio {
+                    allCoinsList
+                        .transition(.move(edge: .leading))
+                }
+                if showPortfolio {
+                    porfolioCoinsList
+                        .transition(.move(edge: .trailing))
+                }
                 
                 Spacer(minLength: 0)
             }
@@ -32,6 +43,7 @@ struct HomeView: View {
         HomeView()
             .toolbar(.hidden)
     }
+    .environment(DeveloperPreview.instance.homeVM)
 }
 
 extension HomeView {
@@ -58,5 +70,40 @@ extension HomeView {
         }
         .padding(.horizontal)
         
+    }
+    
+    private var allCoinsList : some View {
+        List {
+            ForEach(vm.allCoins) { coin in
+                CoinRowView(coin: coin, showHoldingColumn: false)
+                    .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+            }
+        }
+        .listStyle(.plain)
+    }
+    
+    private var porfolioCoinsList : some View {
+        List {
+            ForEach(vm.portfolio) { coin in
+                CoinRowView(coin: coin, showHoldingColumn: true)
+                    .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+            }
+        }
+        .listStyle(.plain)
+    }
+    
+    private var columnText: some View {
+        HStack {
+            Text("Монета")
+            Spacer()
+            if showPortfolio {
+                Text("Активы")
+            }
+            Text("Цена")
+                .frame(width: UIScreen.main.bounds.width / 3, alignment: .trailing)
+        }
+        .font(.caption)
+        .foregroundStyle(Color.theme.secondary)
+        .padding(.horizontal)
     }
 }

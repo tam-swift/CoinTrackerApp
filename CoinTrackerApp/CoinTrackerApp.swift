@@ -9,12 +9,16 @@ import SwiftUI
 
 @main
 struct CoinTrackerApp: App {
+    
+    @State var vm = HomeViewModel()
+    
     var body: some Scene {
         WindowGroup {
             NavigationStack {
                 HomeView()
                     .toolbar(.hidden)
             }
+            .environment(vm)
         }
     }
 }
