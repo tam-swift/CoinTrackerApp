@@ -11,35 +11,52 @@ import Foundation
 /*
     
  URL:
- https://pro-api.coingecko.com/api/v3/coins/markets?vs_currency=rub&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=24h&locale=ru&precision=full
+ https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=1&sparkline=true&price_change_percentage=24h&locale=ru&precision=full
  
  JSON Response:
  {
- "id":"bitcoin",
- "symbol":"btc",
- "name":"Биткоин",
- "image":"https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400",
- "current_price":9058590.952774009,
- "market_cap":180257502518177,
- "market_cap_rank":1,
- "fully_diluted_valuation":180257502518177,
- "total_volume":5319974784430,"high_24h":9471049,
- "low_24h":9061786,"price_change_24h":-402113.8576496653,
- "price_change_percentage_24h":-4.25036,"market_cap_change_24h":-7911224003265.594,
- "market_cap_change_percentage_24h":-4.20432,
- "circulating_supply":19900450.0,
- "total_supply":19900450.0,
- "max_supply":21000000.0,
- "ath":11257762,
- "ath_change_percentage":-19.49074,
- "ath_date":"2024-12-17T18:10:38.805Z",
- "atl":2206.43,"atl_change_percentage":410677.95722,
- "atl_date":"2013-07-05T00:00:00.000Z",
- "roi":null,
- "last_updated":"2025-08-01T20:19:32.207Z",
- "sparkline_in_7d":{"price":[116140.32153899151,116519.04909679179]},
- "price_change_percentage_24h_in_currency":-4.250358358149192
- }
+     "id": "bitcoin",
+     "symbol": "btc",
+     "name": "Биткоин",
+     "image": "https://coin-images.coingecko.com/coins/images/1/large/bitcoin.png?1696501400",
+     "current_price": 114569.91040050802,
+     "market_cap": 2279928406593,
+     "market_cap_rank": 1,
+     "fully_diluted_valuation": 2279930926910,
+     "total_volume": 24953424306,
+     "high_24h": 114869,
+     "low_24h": 113582,
+     "price_change_24h": 988.28,
+     "price_change_percentage_24h": 0.8701,
+     "market_cap_change_24h": 19227747185,
+     "market_cap_change_percentage_24h": 0.85052,
+     "circulating_supply": 19901637,
+     "total_supply": 19901659,
+     "max_supply": 21000000,
+     "ath": 122838,
+     "ath_change_percentage": -6.79745,
+     "ath_date": "2025-07-14T07:56:01.937Z",
+     "atl": 67.81,
+     "atl_change_percentage": 168739.14877,
+     "atl_date": "2013-07-06T00:00:00.000Z",
+     "roi": null,
+     "last_updated": "2025-08-04T08:45:53.929Z",
+     "sparkline_in_7d": {
+       "price": [
+         119568.35054365265,
+         119397.76938174861,
+         118939.05286000959,
+         119009.98465153869,
+         118930.20208901197,
+         118759.96982107592,
+         118804.82575621677,
+         118828.90710731824,
+         118412.8584215169,
+         117997.89804153176,
+       ]
+     },
+     "price_change_percentage_24h_in_currency": 0.8701024923356038
+   }
 */
 
 
