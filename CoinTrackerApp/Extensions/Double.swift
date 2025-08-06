@@ -32,6 +32,32 @@ extension Double {
         let number = NSNumber(value: self)
         return currencyFormatter2.string(from: number) ?? "$0.00"
     }
+    /// Converts a Double into a Currency with 2-6 decimal places
+    ///  ```
+    ///  1234.56 -> $1,234.56
+    ///  12.3456 -> $12.3456
+    ///  0.123456 -> $0.123456
+    ///  ```
+    private var currencyFormatter6: NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: "en_US")
+        formatter.numberStyle = .currency
+        formatter.usesGroupingSeparator = true
+        formatter.currencySymbol = "$"
+        formatter.currencyCode = "usd"
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 6
+        return formatter
+    }
+    
+    /// Converts a Double into a Currency as a String with 2-6 decimal places
+    ///  ```
+    ///  0.123456 -> "$0.123456"
+    ///  ```
+    func asCurrencyWith6Decimals() -> String {
+        let number = NSNumber(value: self)
+        return currencyFormatter6.string(from: number) ?? "$0.00"
+    }
     
     /// Converts a Double into string representation
     ///  ```
