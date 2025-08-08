@@ -61,6 +61,7 @@ extension CoinRowView {
                 .foregroundStyle(Color.theme.accent)
             HStack(spacing: 3) {
                 Image(systemName: coin.priceChangePercentage24H?.getChevron() ?? "")
+                    .font(.caption)
                 Text(coin.priceChangePercentage24H?.asPercentString() ?? "")
             }
             .foregroundStyle(
