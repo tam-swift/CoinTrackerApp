@@ -15,6 +15,9 @@ struct HomeView: View {
     
     var body: some View {
         
+        // A stub for Bindible (Because using macros @Observable)
+        @Bindable var bindableVM = vm
+        
         ZStack {
             // background layer
             Color.theme.background.ignoresSafeArea()
@@ -22,6 +25,9 @@ struct HomeView: View {
             // content layer
             VStack {
                 homeHeader
+
+                SearchBarView(searchText: $bindableVM.searchText)
+                
                 columnText
                 if !showPortfolio {
                     allCoinsList
@@ -80,6 +86,7 @@ extension HomeView {
             }
         }
         .listStyle(.plain)
+        .scrollDismissesKeyboard(.immediately)
     }
     
     private var porfolioCoinsList : some View {
@@ -90,6 +97,7 @@ extension HomeView {
             }
         }
         .listStyle(.plain)
+        .scrollDismissesKeyboard(.immediately)
     }
     
     private var columnText: some View {

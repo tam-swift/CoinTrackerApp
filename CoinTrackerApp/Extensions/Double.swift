@@ -70,7 +70,7 @@ extension Double {
         let number = NSNumber(value: self)
         switch self  {
             case 2..<10: return currencyFormatter4.string(from: number) ?? "$0.00"
-            case 0...1: return currencyFormatter6.string(from: number) ?? "$0.00"
+            case 0..<2: return currencyFormatter6.string(from: number) ?? "$0.00"
             default: return currencyFormatter2.string(from: number) ?? "$0.00"
         }
     }
@@ -80,6 +80,9 @@ extension Double {
     ///  1.2356 -> "1.23"
     ///  ```
     func asNumberString() -> String {
+        guard
+            abs(self) >= 0.01 else {return "0.00"}
+            
         return String(format: "%.2f", self)
     }
     
@@ -89,6 +92,25 @@ extension Double {
     ///  ```
     func asPercentString() -> String{
         return asNumberString() + "%"
+    }
+    
+    /// Converts a Double to a String with a chevron from sf symbols
+    ///  ```
+    ///  1.235678 -> "chevron.up"
+    ///  -34.56 -> "chevron.down.2"
+    ///  ```
+    func getChevron() -> String {
+        if self >= 0.01 && self < 20 {
+            return "chevron.up"
+        } else if self >= 20 {
+            return "chevron.up.2"
+        } else if self <= -0.01 && self > -20 {
+            return "chevron.down"
+        } else if self < -20 {
+            return "chevron.down.2"
+        } else {
+            return ""
+        }
     }
 }
 

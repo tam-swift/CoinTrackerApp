@@ -59,14 +59,17 @@ extension CoinRowView {
             Text(coin.currentPrice.asCurrencyWith246Decimals())
                 .bold()
                 .foregroundStyle(Color.theme.accent)
-            Text(coin.priceChangePercentage24H?.asPercentString() ?? "")
-                .foregroundStyle(
-                    abs(coin.priceChangePercentage24H ?? 0 ) <= 0.001 ?
-                     Color.theme.secondary :
+            HStack(spacing: 3) {
+                Image(systemName: coin.priceChangePercentage24H?.getChevron() ?? "")
+                Text(coin.priceChangePercentage24H?.asPercentString() ?? "")
+            }
+            .foregroundStyle(
+                abs(coin.priceChangePercentage24H ?? 0 ) < 0.01 ?
+                Color.theme.secondary :
                     (coin.priceChangePercentage24H ?? 0 > 0 ?
-                      Color.theme.green :
+                     Color.theme.green :
                         Color.theme.red)
-                )
+            )
         }
         .frame(width: UIScreen.main.bounds.width / 3, alignment: .trailing)
     }

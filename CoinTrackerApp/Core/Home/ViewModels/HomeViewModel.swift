@@ -17,15 +17,38 @@ import Combine
     
     private var cancellables = Set<AnyCancellable>()
     
+    @Published @ObservationIgnored var searchText = ""
+    
     init() {
-        getAllCoinsFromCoinDataService()
+        addSubscribers()
     }
     
-    func getAllCoinsFromCoinDataService() {
+    func addSubscribers() {
         coinDataService.$allCoins
             .sink { [weak self] returnedCoins in
                 self?.allCoins = returnedCoins
             }
             .store(in: &cancellables)
+        $searchText
+            .combineLatest(coinDataService.$allCoins)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+            .map(filterCoins)
+            .sink { [weak self] filteredCoins in
+                self?.allCoins = filteredCoins
+            }
+            .store(in: &cancellables)
+            
+    }
+    
+    private func filterCoins(text: String, coins : [Coin]) -> [Coin] {
+        guard !text.isEmpty else {
+            return coins
+        }
+        let lowercasedText = text.lowercased()
+        return coins.filter { coin in
+            return coin.name.lowercased().contains(lowercasedText) ||
+            coin.symbol.lowercased().contains(lowercasedText) ||
+            coin.id.lowercased().contains(lowercasedText)
+        }
     }
 }
