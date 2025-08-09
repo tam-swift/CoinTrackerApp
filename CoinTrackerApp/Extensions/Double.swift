@@ -112,6 +112,36 @@ extension Double {
             return ""
         }
     }
+    
+    /// Formatter for reducing numbers into billions (B) and trillions (T):
+    /// ```
+    /// 123.456.789.123.456 -> 123.45T
+    /// 123.456.789.123 -> 123.45B
+    /// 123.456.789 -> 123.45M
+    /// 123.456 -> 123.45K
+    /// 123 -> 123
+    /// ```
+    func asShortenedString() -> String {
+            let absValue = abs(self)
+            let sign = self < 0 ? "-" : ""
+            
+            switch absValue {
+            case 1_000_000_000_000...:
+                let value = absValue / 1_000_000_000_000
+                return "\(sign)\(String(format: "%.2f", value))T"
+            case 1_000_000_000...:
+                let value = absValue / 1_000_000_000
+                return "\(sign)\(String(format: "%.2f", value))B"
+            case 1_000_000...:
+                let value = absValue / 1_000_000
+                return "\(sign)\(String(format: "%.2f", value))M"
+            case 1_000...:
+                let value = absValue / 1_000
+                return "\(sign)\(String(format: "%.2f", value))K"
+            default:
+                return "\(sign)\(String(format: "%.0f", self))"
+            }
+        }
 }
 
 

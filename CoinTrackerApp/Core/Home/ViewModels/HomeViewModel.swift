@@ -10,17 +10,13 @@ import Combine
 
 @Observable class HomeViewModel {
     
-    @Published @ObservationIgnored var statistics: [Statistic] = [
-        Statistic(title: "Title", value: "Value", percentageChange: 1),
-        Statistic(title: "Title", value: "Value", percentageChange: 21),
-        Statistic(title: "Title", value: "Value"),
-        Statistic(title: "Title", value: "Value", percentageChange: -1),
-    ]
+    var statistics: [Statistic] = []
     
     var allCoins : [Coin] = []
     var portfolio :  [Coin] = []
     
     let coinDataService = CoinDataService.instance
+    let marketDataService = MarketDataService.instance
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -44,7 +40,12 @@ import Combine
                 self?.allCoins = filteredCoins
             }
             .store(in: &cancellables)
-            
+        marketDataService.$marketData
+            .map(mapGlobalMarketData)
+            .sink { [weak self] returnedStats in
+                self?.statistics = returnedStats
+            }
+            .store(in: &cancellables)
     }
     
     private func filterCoins(text: String, coins : [Coin]) -> [Coin] {
@@ -57,5 +58,26 @@ import Combine
             coin.symbol.lowercased().contains(lowercasedText) ||
             coin.id.lowercased().contains(lowercasedText)
         }
+    }
+    
+    private func mapGlobalMarketData(data: MarketData?) -> [Statistic] {
+            var stats: [Statistic] = []
+            
+            guard let data = data else {
+                return stats
+            }
+            
+            let marketCap = Statistic(title: "Кап. рынка", value: data.marketCap, percentageChange: data.marketCapChangePercentage24HUsd)
+            let volume = Statistic(title: "Объем за 24ч", value: data.volume)
+            let btcDominance = Statistic(title: "Домин. BTC", value: data.btcDominance)
+            let portfolio = Statistic(title: "Портфель", value: "$0.00", percentageChange: 0)
+            
+            stats.append(contentsOf: [
+                marketCap,
+                volume,
+                btcDominance,
+                portfolio
+            ])
+            return stats
     }
 }

@@ -12,11 +12,13 @@ class NetworkingManager {
     
     enum NetworkingError: LocalizedError {
         case badURLResponse(url : URL)
+        case tooManyRequests(url: URL)
         case unknown
         
         var errorDescription: String? {
             switch self {
-            case .badURLResponse(url: let url): return " [⚡️] Bad response from URL. \(url)"
+            case .badURLResponse(url: let url): return " [⚡️] Bad response from URL. \(url)."
+            case .tooManyRequests(url: let url): return "[🪫] You've exceeded the Rate Limit. \(url)."
             case .unknown: return " [⚠️] Unknown error occured"
             }
         }
@@ -35,6 +37,9 @@ class NetworkingManager {
             let response = output.response as? HTTPURLResponse,
             response.statusCode >= 200 && response.statusCode < 300 else {
             throw NetworkingError.badURLResponse(url: url)
+        }
+        guard (output.response as? HTTPURLResponse)?.statusCode != 421  else{
+            throw NetworkingError.tooManyRequests(url: url)
         }
         return output.data
     }

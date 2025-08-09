@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct StatisticView: View {
+
     
     let stat: Statistic
     
@@ -39,5 +40,5 @@ struct StatisticView: View {
 }
 
 #Preview {
-        StatisticView(stat: DeveloperPreview.instance.stat)
+    StatisticView(stat: DeveloperPreview.instance.stat)
 }
