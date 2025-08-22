@@ -12,11 +12,14 @@ import Combine
     
     var statistics: [Statistic] = []
     
-    var allCoins : [Coin] = []
-    var portfolio :  [Coin] = []
+    // Published wrapper for using subscribers
+    @Published @ObservationIgnored var allCoins : [Coin] = []
     
-    let coinDataService = CoinDataService.instance
-    let marketDataService = MarketDataService.instance
+    var portfolioCoins :  [Coin] = []
+    
+    private let coinDataService = CoinDataService.instance
+    private let marketDataService = MarketDataService.instance
+    private let portfolioDataService = PortfolioDataService()
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -46,6 +49,25 @@ import Combine
                 self?.statistics = returnedStats
             }
             .store(in: &cancellables)
+        $allCoins
+            .combineLatest(portfolioDataService.$savedEntities)
+            .map { coins, portfolio -> [Coin] in
+                coins.compactMap { coin -> Coin? in
+                    guard let entity = portfolio.first(where: {$0.coinID == coin.id}) else {
+                        return nil
+                    }
+                    
+                    return coin.updateHoldings(amount: entity.amount)
+                }
+            }
+            .sink { [weak self] returnedCoins in
+                self?.portfolioCoins = returnedCoins
+            }
+            .store(in: &cancellables)
+    }
+    
+    func updatePortfolio(coin: Coin, amount: Double) {
+        portfolioDataService.updatePortfolio(coin: coin, amount: amount)
     }
     
     private func filterCoins(text: String, coins : [Coin]) -> [Coin] {
@@ -70,7 +92,9 @@ import Combine
             let marketCap = Statistic(title: "Кап. рынка", value: data.marketCap, percentageChange: data.marketCapChangePercentage24HUsd)
             let volume = Statistic(title: "Объем за 24ч", value: data.volume)
             let btcDominance = Statistic(title: "Домин. BTC", value: data.btcDominance)
-            let portfolio = Statistic(title: "Портфель", value: "$0.00", percentageChange: 0)
+            let portfolio = Statistic(title: "Портфель",
+                                      value: "$0.00",
+                                  percentageChange: 0)
             
             stats.append(contentsOf: [
                 marketCap,

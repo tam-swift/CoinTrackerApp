@@ -33,13 +33,13 @@ class NetworkingManager {
     }
     
     static func handleResponse(output: URLSession.DataTaskPublisher.Output, url : URL) throws -> Data {
+        guard (output.response as? HTTPURLResponse)?.statusCode != 421  else{
+            throw NetworkingError.tooManyRequests(url: url)
+        }
         guard
             let response = output.response as? HTTPURLResponse,
             response.statusCode >= 200 && response.statusCode < 300 else {
             throw NetworkingError.badURLResponse(url: url)
-        }
-        guard (output.response as? HTTPURLResponse)?.statusCode != 421  else{
-            throw NetworkingError.tooManyRequests(url: url)
         }
         return output.data
     }

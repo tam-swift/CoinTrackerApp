@@ -14,7 +14,7 @@ struct CoinTrackerApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
+            NavigationView {
                 HomeView()
                     .toolbar(.hidden)
             }
