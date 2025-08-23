@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
     
-    @Environment(HomeViewModel.self) var vm
+    @EnvironmentObject var vm : HomeViewModel
     
     @State private var showPortfolio: Bool = false // animate right
     
@@ -22,9 +22,6 @@ struct HomeView: View {
     
     var body: some View {
         
-        // A stub for Bindible (Because using macros @Observable)
-        @Bindable var bindableVM = vm
-        
         ZStack {
             // background layer
             Color.theme.background.ignoresSafeArea()
@@ -35,7 +32,7 @@ struct HomeView: View {
                 
                 HomeStatsView(showPortfolio: $showPortfolio)
                 
-                SearchBarView(searchText: $bindableVM.searchText)
+                SearchBarView(searchText: $vm.searchText)
                 
                 columnText
 
@@ -83,6 +80,11 @@ struct HomeView: View {
                 )
         
         }
+        .refreshable {
+            withAnimation(.linear(duration: 2)) {
+                vm.reloadData()
+            }
+        }
         .gesture(
             DragGesture(minimumDistance: 20)
                 .updating($dragOffset) {
@@ -113,7 +115,7 @@ struct HomeView: View {
         HomeView()
             .toolbar(.hidden)
     }
-    .environment(DeveloperPreview.instance.homeVM)
+    .environmentObject(DeveloperPreview.instance.homeVM)
 }
 
 extension HomeView {
@@ -167,13 +169,43 @@ extension HomeView {
     
     private var columnText: some View {
         HStack {
-            Text("Монета")
+            HStack(spacing: 4) {
+                Text("Монета")
+                Image(systemName: "chevron.down")
+                    .opacity(vm.sortOption == .rank || vm.sortOption == .rankReversed ? 1 : 0)
+                    .rotationEffect(Angle(degrees: vm.sortOption == .rank ? 0 : 180))
+            }
+            .onTapGesture {
+                withAnimation(.default) {
+                    vm.sortOption = vm.sortOption == .rank ? .rankReversed : .rank
+                }
+            }
             Spacer()
             if showPortfolio {
-                Text("Активы")
+                HStack(spacing: 4) {
+                    Text("Активы")
+                    Image(systemName: "chevron.down")
+                        .opacity(vm.sortOption == .holdings || vm.sortOption == .holdingsReversed ? 1 : 0)
+                        .rotationEffect(Angle(degrees: vm.sortOption == .holdings ? 0 : 180))
+                }
+                .onTapGesture {
+                    withAnimation(.default) {
+                        vm.sortOption = vm.sortOption == .holdings ? .holdingsReversed : .holdings
+                    }
+                }
             }
-            Text("Цена")
-                .frame(width: UIScreen.main.bounds.width / 3, alignment: .trailing)
+            HStack(spacing: 4) {
+                Text("Цена")
+                    .frame(width: UIScreen.main.bounds.width / 3, alignment: .trailing)
+                Image(systemName: "chevron.down")
+                    .opacity(vm.sortOption == .price || vm.sortOption == .priceReversed ? 1 : 0)
+                    .rotationEffect(Angle(degrees: vm.sortOption == .price ? 0 : 180))
+            }
+            .onTapGesture {
+                withAnimation(.default) {
+                    vm.sortOption = vm.sortOption == .price ? .priceReversed : .price
+                }
+            }
         }
         .font(.caption)
         .foregroundStyle(Color.theme.secondary)

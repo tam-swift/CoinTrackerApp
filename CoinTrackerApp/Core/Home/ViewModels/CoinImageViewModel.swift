@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-@Observable class CoinImageViewModel {
+class CoinImageViewModel : ObservableObject {
     
     var image: UIImage? = nil
     var isLoading: Bool = false

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct HomeStatsView: View {
     
-    @Environment(HomeViewModel.self) var vm
+    @EnvironmentObject var vm : HomeViewModel
     
     @Binding var showPortfolio: Bool
     
@@ -27,5 +27,5 @@ struct HomeStatsView: View {
 
 #Preview {
     HomeStatsView(showPortfolio: .constant(false))
-        .environment(DeveloperPreview.instance.homeVM)
+        .environmentObject(DeveloperPreview.instance.homeVM)
 }

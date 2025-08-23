@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PortfolioView: View {
 
-    @Environment(HomeViewModel.self) var vm
+    @EnvironmentObject var vm : HomeViewModel
     @State private var selectedCoin: Coin? = nil
     @State private var quantityText = ""
     @Environment(\.dismiss) var dismiss
@@ -18,12 +18,10 @@ struct PortfolioView: View {
     @Binding var endOf : CGFloat
     
     var body: some View {
-        // A stub for Bindible (Because using macros @Observable)
-        @Bindable var bindableVM = vm
-        
+
         VStack(alignment: .leading, spacing: 0) {
             previewTitle
-            SearchBarView(searchText: $bindableVM.searchText)
+            SearchBarView(searchText: $vm.searchText)
             if vm.allCoins.isEmpty {
                 Text("Монеты не найдены")
                     .padding()
@@ -32,6 +30,7 @@ struct PortfolioView: View {
                     .foregroundStyle(Color.theme.accent)
             } else {
                 coinLogoList
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
             }
             
             if selectedCoin != nil {
@@ -42,6 +41,7 @@ struct PortfolioView: View {
             }
             Spacer()
         }
+        .animation(.spring(), value: vm.allCoins.isEmpty)
         .background(Material.thin)
         .onChange(of: vm.searchText) { _ , value in
             if value == "" {
@@ -58,9 +58,9 @@ struct PortfolioView: View {
             LazyHStack(spacing: 10) {
                 ForEach(vm.allCoins.sorted(by: sortedPortfolioCoins)) { coin in
                     VStack {
-                        if let portfCoin = vm.portfolioCoins.first(where: {$0.id == coin.id}), let holdings = portfCoin.currentHoldings  {
-                            Text(holdings.description)
-                                .font(.caption)
+                        if let portfCoin = vm.portfolioCoins.first(where: {$0.id == coin.id}), let holding = portfCoin.currentHoldings  {
+                            Text(holding.description)
+                                .font(.headline)
                                 .foregroundStyle(Color.theme.accent)
                         }
                         CoinIconView(coin: coin)
@@ -207,6 +207,6 @@ struct PortfolioView: View {
 }
 #Preview {
     PortfolioView(endOf: .constant(0))
-        .environment(DeveloperPreview.instance.homeVM)
+        .environmentObject(DeveloperPreview.instance.homeVM)
         
 }

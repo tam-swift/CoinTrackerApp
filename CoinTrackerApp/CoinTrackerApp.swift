@@ -10,7 +10,7 @@ import SwiftUI
 @main
 struct CoinTrackerApp: App {
     
-    @State var vm = HomeViewModel()
+    @StateObject var vm = HomeViewModel()
     
     var body: some Scene {
         WindowGroup {
@@ -18,7 +18,7 @@ struct CoinTrackerApp: App {
                 HomeView()
                     .toolbar(.hidden)
             }
-            .environment(vm)
+            .environmentObject(vm)
         }
     }
 }
