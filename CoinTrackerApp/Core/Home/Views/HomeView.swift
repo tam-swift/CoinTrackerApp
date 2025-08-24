@@ -12,13 +12,17 @@ struct HomeView: View {
     @EnvironmentObject var vm : HomeViewModel
     
     @State private var showPortfolio: Bool = false // animate right
+    @State private var showInfo: Bool = false
     
     @GestureState private var dragOffset = CGSize.zero
     
     // Properties for set up offsets portfolio view
-    @State var startingOffsY : CGFloat = UIScreen.main.bounds.height * 0.81
-    @State var currentOffsY: CGFloat = 0
+    @State private var startingOffsY : CGFloat = UIScreen.main.bounds.height * 0.81
+    @State private var currentOffsY: CGFloat = 0
     @State var endOffsY: CGFloat = 0
+    
+    @State private var isShowingDestination = false
+    @State private var selectedCoin: Coin? = nil
     
     var body: some View {
         
@@ -43,8 +47,8 @@ struct HomeView: View {
                 if showPortfolio {
                     porfolioCoinsList
                         .transition(.move(edge: .trailing))
+                    Spacer(minLength: 70)
                 }
-                
                 Spacer(minLength: 0)
             }
             PortfolioView(endOf: $endOffsY)
@@ -80,11 +84,15 @@ struct HomeView: View {
                 )
         
         }
-        .refreshable {
-            withAnimation(.linear(duration: 2)) {
-                vm.reloadData()
+        .sheet(isPresented: $showInfo, content: {
+            SettingsView()
+        })
+        .navigationDestination(isPresented: $isShowingDestination) {
+            if let coin = selectedCoin {
+                DetailView(coin: coin)
             }
         }
+        
         .gesture(
             DragGesture(minimumDistance: 20)
                 .updating($dragOffset) {
@@ -125,7 +133,7 @@ extension HomeView {
         HStack {
             CircleButtonView(iconName: "info")
                 .onTapGesture {
-                    guard !showPortfolio else {return}
+                    showInfo.toggle()
                 }
             Spacer()
             Text(showPortfolio == true ? "Мой портфель" : "Текущие цены")
@@ -150,17 +158,37 @@ extension HomeView {
             ForEach(vm.allCoins) { coin in
                 CoinRowView(coin: coin, showHoldingColumn: false)
                     .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+                    .onTapGesture {
+                        selectedCoin = coin
+                        isShowingDestination = true
+                    }
+            }
+            
+        }
+        .refreshable {
+            withAnimation(.linear(duration: 2)) {
+                vm.reloadData()
             }
         }
         .listStyle(.plain)
         .scrollDismissesKeyboard(.immediately)
     }
+
     
     private var porfolioCoinsList : some View {
         List {
             ForEach(vm.portfolioCoins) { coin in
                 CoinRowView(coin: coin, showHoldingColumn: true)
                     .listRowInsets(.init(top: 10, leading: 0, bottom: 10, trailing: 10))
+                    .onTapGesture {
+                        selectedCoin = coin
+                        isShowingDestination = true
+                    }
+            }
+        }
+        .refreshable {
+            withAnimation(.linear(duration: 2)) {
+                vm.reloadData()
             }
         }
         .listStyle(.plain)
@@ -214,3 +242,4 @@ extension HomeView {
     
     
 }
+

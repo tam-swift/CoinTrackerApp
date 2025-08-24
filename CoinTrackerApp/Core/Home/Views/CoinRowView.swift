@@ -22,6 +22,11 @@ struct CoinRowView: View {
             rightColumn
         }
         .font(.subheadline)
+        
+        // For proper CoinRowView clickability
+        .background(
+            Color.theme.background.opacity(0.001)
+        )
     }
 }
 

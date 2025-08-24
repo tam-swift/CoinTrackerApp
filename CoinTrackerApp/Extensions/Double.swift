@@ -139,7 +139,7 @@ extension Double {
                 let value = absValue / 1_000
                 return "\(sign)\(String(format: "%.2f", value))K"
             default:
-                return "\(sign)\(String(format: "%.0f", self))"
+                return "\(sign)\(String(format: "%.6f", self))"
             }
         }
 }

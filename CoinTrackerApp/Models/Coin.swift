@@ -5,8 +5,6 @@
 //  Created by Tamerlan Swift on 02.08.2025.
 //
 
-import Foundation
-
 // CoinGecko API info
 /*
     
@@ -59,8 +57,9 @@ import Foundation
    }
 */
 
+import Foundation
 
-struct Coin: Identifiable, Codable {
+struct Coin: Identifiable, Codable{
     let id, symbol, name: String
     let image: String
     let currentPrice: Double

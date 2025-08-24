@@ -12,7 +12,6 @@ struct PortfolioView: View {
     @EnvironmentObject var vm : HomeViewModel
     @State private var selectedCoin: Coin? = nil
     @State private var quantityText = ""
-    @Environment(\.dismiss) var dismiss
     @FocusState private var focusTF : Bool
     
     @Binding var endOf : CGFloat
@@ -37,6 +36,9 @@ struct PortfolioView: View {
                 VStack(spacing: 10) {
                     currentCoinSetUp
                     addButton
+                    if let portfCoin = vm.portfolioCoins.first(where: {$0.id == selectedCoin?.id}), portfCoin.currentHoldings != nil  {
+                        removeButton
+                    }
                 }
             }
             Spacer()
@@ -53,6 +55,15 @@ struct PortfolioView: View {
         
     }
     
+    
+}
+#Preview {
+    PortfolioView(endOf: .constant(0))
+        .environmentObject(DeveloperPreview.instance.homeVM)
+        
+}
+
+extension PortfolioView {
     private var coinLogoList : some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(spacing: 10) {
@@ -60,8 +71,8 @@ struct PortfolioView: View {
                     VStack {
                         if let portfCoin = vm.portfolioCoins.first(where: {$0.id == coin.id}), let holding = portfCoin.currentHoldings  {
                             Text(holding.description)
-                                .font(.headline)
-                                .foregroundStyle(Color.theme.accent)
+                                .font(.caption)
+                                .foregroundStyle(Color.theme.secondary)
                         }
                         CoinIconView(coin: coin)
                     }
@@ -146,6 +157,29 @@ struct PortfolioView: View {
         }
         .opacity(quantityText.isEmpty ? 0.3 : 1)
         .padding(.horizontal)
+        .padding(.bottom)
+
+    }
+    private var removeButton: some View {
+        Button(action: {
+            withAnimation(.easeIn) {
+                pressRemoveButton()
+            }
+        }) {
+            Text("Аннулировать")
+                .font(.headline)
+                .foregroundStyle(Color.theme.red.opacity(0.8))
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.theme.background)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .contentShape(RoundedRectangle(cornerRadius: 15))
+                .shadow(
+                    color: Color.theme.red.opacity(quantityText.isEmpty ? 0 :0.2),
+                    radius: 10)
+        }
+        .opacity(quantityText.isEmpty ? 0.3 : 1)
+        .padding(.horizontal)
 
     }
     private var previewTitle: some View {
@@ -154,7 +188,7 @@ struct PortfolioView: View {
                 .font(.headline)
                 .rotationEffect(Angle(degrees: endOf != 0 ? 180 : 0))
                 .padding(.top, 5)
-            Text("Добавить актив")
+            Text("Управление активами")
                 .font(.largeTitle)
                 .bold()
                 .padding(.top)
@@ -192,21 +226,25 @@ struct PortfolioView: View {
     
     private func pressSaveButton() {
         guard let coin = selectedCoin else { return }
-        guard let holdings = Double(quantityText.replacingOccurrences(of: ",", with: ".")), holdings > 0.000001 || holdings == 0 else {
+        guard let holding = Double(quantityText.replacingOccurrences(of: ",", with: ".")), holding > 0.000001 || holding == 0 else {
             focusTF.toggle()
             return
         }
-        vm.updatePortfolio(coin: coin, amount: holdings)
+        vm.updatePortfolio(coin: coin, amount: holding)
         hideKeyboard()
         endOf = 0
         quantityText = ""
         vm.searchText = ""
         selectedCoin = nil
-        dismiss()
     }
-}
-#Preview {
-    PortfolioView(endOf: .constant(0))
-        .environmentObject(DeveloperPreview.instance.homeVM)
-        
+    private func pressRemoveButton() {
+        guard let coin = selectedCoin else { return }
+        guard let portfCoin = vm.portfolioCoins.first(where: {$0.id == selectedCoin?.id}), let holding = portfCoin.currentHoldings, holding != 0 else { return }
+        vm.updatePortfolio(coin: coin, amount: 0)
+        hideKeyboard()
+        endOf = 0
+        quantityText = ""
+        vm.searchText = ""
+        selectedCoin = nil
+    }
 }
