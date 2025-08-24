@@ -143,7 +143,7 @@ extension PortfolioView {
                 pressSaveButton()
             }
         }) {
-            Text("Добавить")
+            Text("Сохранить")
                 .font(.headline)
                 .foregroundStyle(Color.theme.accent)
                 .padding()

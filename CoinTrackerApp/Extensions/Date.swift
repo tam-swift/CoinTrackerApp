@@ -19,7 +19,8 @@ extension Date {
     
     private var shortFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateStyle = .short
+        formatter.dateFormat = "dd.MM"
+        formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }
     

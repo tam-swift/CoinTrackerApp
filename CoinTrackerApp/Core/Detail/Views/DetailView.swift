@@ -63,6 +63,7 @@ struct DetailView: View {
                 }
             }
         }
+        .fontDesign(.rounded)
     }
     
     private var overviewTitle : some View {

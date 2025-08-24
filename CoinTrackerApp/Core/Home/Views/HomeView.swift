@@ -45,8 +45,24 @@ struct HomeView: View {
                         .transition(.move(edge: .leading))
                 }
                 if showPortfolio {
-                    porfolioCoinsList
-                        .transition(.move(edge: .trailing))
+                    ZStack(alignment: .top) {
+                        if vm.portfolioCoins.isEmpty && vm.searchText.isEmpty {
+                            VStack(spacing: 10) {
+                                Text("На данный момент в вашем портфолио ничего нет. Вы можете добавить монеты в разделе \"Управление активами\", которое находится ниже.")
+                                    .font(.callout)
+                                    .fontWeight(.medium)
+                                    .multilineTextAlignment(.center)
+                                Image(systemName: "chevron.down.dotted.2")
+                                    .font(.headline)
+                            }
+                            .padding(30)
+                            .foregroundStyle(Color.theme.accent)
+                            
+                        } else {
+                            porfolioCoinsList
+                                .transition(.move(edge: .trailing))
+                        }
+                    }
                     Spacer(minLength: 70)
                 }
                 Spacer(minLength: 0)
