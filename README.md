@@ -1,6 +1,6 @@
 # Coin Tracker — Криптотрекер на iOS [![Swift Version](https://img.shields.io/badge/Swift-5.0-orange)](https://swift.org)
 
-[![Демо](https://i.postimg.cc/FFPJpsp2/IMG-2200.gif)](https://postimg.cc/hhdjPnHr)
+[![Демо](Demo-Gif/IMG_2200.gif)](https://postimg.cc/hhdjPnHr)
 
 **Приложение для отслеживания курсов криптовалют в реальном времени.**
 
